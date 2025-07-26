@@ -53,7 +53,9 @@ class RestaurantModels {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError("Failed updated restaurant");
+      throw new NotFoundError(
+        "Failed updated restaurant, Id restaurant not found"
+      );
     }
   }
 
@@ -66,7 +68,9 @@ class RestaurantModels {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError("Failed deleted restaurant");
+      throw new NotFoundError(
+        "Failed deleted restaurant, Id restaurant not found"
+      );
     }
   }
 }

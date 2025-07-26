@@ -6,6 +6,9 @@ import cors from "cors";
 import pool from "./config/db.js";
 import ClientError from "./exceptions/ClientError.js";
 import restaurantRouter from "./routes/restaurants.js";
+import menuRouter from "./routes/menus.js";
+import path from "path";
+import { projectRoot } from "./utils/pathHelper.js";
 
 const app = express();
 const port = process.env.PORT || 6000;
@@ -21,9 +24,18 @@ const corsOption = {
   credentials: true,
 };
 
+// Middleware
 app.use(cors(corsOption));
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  "/assets/menus",
+  express.static(path.join(projectRoot, "public", "menus"))
+);
+app.use(
+  "/assets/profile",
+  express.static(path.join(projectRoot, "public", "profiles"))
+);
 
 // Middleware for handle error
 app.use((err, req, res, next) => {
@@ -41,7 +53,8 @@ app.use((err, req, res, next) => {
 });
 
 // Defining routes
-app.use("/restaurants", restaurantRouter);
+app.use("/api/restaurants", restaurantRouter);
+app.use("/api/menus", menuRouter);
 
 app.listen(port, () => {
   console.log(`Server running in http://${host}:${port}`);

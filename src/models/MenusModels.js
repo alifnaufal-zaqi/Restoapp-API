@@ -7,5 +7,99 @@ class MenusModels {
     this._pool = pool;
   }
 
-  async insertNewMenus({}) {}
+  async insertNewMenus({
+    idCategory,
+    idRestaurant,
+    menuName,
+    price,
+    stock,
+    image,
+  }) {
+    const idMenu = `menu-${nanoid(16)}`;
+    const query = {
+      text: "INSERT INTO menus (id_menu, id_category, id_restaurant, menu_name, price, stock, image) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_menu",
+      values: [idMenu, idCategory, idRestaurant, menuName, price, stock, image],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows[0].id_menu) {
+      throw new InvariantError("Failed adding new menu");
+    }
+
+    return result.rows[0].id_menu;
+  }
+
+  async selectImageMenuById(id) {
+    const query = {
+      text: `SELECT menus.id_menu,
+              categories.category_name,
+              restaurants.restaurant_name,
+              menus.menu_name, menus.price,
+              menus.stock,
+              menus.image
+              FROM menus JOIN categories
+              ON menus.id_category = categories.id_category
+              JOIN restaurants
+              ON menus.id_restaurant = restaurants.id_restaurant
+              WHERE id_menu = $1`,
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError("Menu not found");
+    }
+
+    return result.rows[0];
+  }
+
+  async selectAllMenus() {
+    const menus = await this._pool.query(
+      `SELECT menus.id_menu,
+      categories.category_name,
+      restaurants.restaurant_name,
+      menus.menu_name, menus.price,
+      menus.stock,
+      menus.image
+      FROM menus JOIN categories
+      ON menus.id_category = categories.id_category
+      JOIN restaurants
+      ON menus.id_restaurant = restaurants.id_restaurant`
+    );
+
+    return menus.rows;
+  }
+
+  async updateMenuById(
+    id,
+    { idCategory, idRestaurant, menuName, price, stock, image }
+  ) {
+    const query = {
+      text: "UPDATE menus SET id_category = $1, id_restaurant = $2, menu_name = $3, price = $4, stock = $5, image = $6 WHERE id_menu = $7 RETURNING id_menu",
+      values: [idCategory, idRestaurant, menuName, price, stock, image, id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError("Failed updated menu, Id menu not found");
+    }
+  }
+
+  async deleteMenuById(id) {
+    const query = {
+      text: "DELETE FROM menus WHERE id_menu = $1 RETURNING id_menu",
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError("Failed deleted menu");
+    }
+  }
 }
+
+export default MenusModels;
