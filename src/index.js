@@ -7,6 +7,7 @@ import pool from "./config/db.js";
 import ClientError from "./exceptions/ClientError.js";
 import restaurantRouter from "./routes/restaurants.js";
 import menuRouter from "./routes/menus.js";
+import userRouter from "./routes/users.js";
 import path from "path";
 import { projectRoot } from "./utils/pathHelper.js";
 
@@ -55,6 +56,7 @@ app.use((err, req, res, next) => {
 // Defining routes
 app.use("/api/restaurants", restaurantRouter);
 app.use("/api/menus", menuRouter);
+app.use("/api/users", userRouter);
 
 app.listen(port, () => {
   console.log(`Server running in http://${host}:${port}`);
