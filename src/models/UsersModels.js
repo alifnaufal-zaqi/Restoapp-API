@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
-import NotFoundError from "../exceptions/NotFoundError.js";
+import AuthenticationError from "../exceptions/AuthenticationError.js";
 import InvariantError from "../exceptions/InvariantError.js";
+import bcrypt from "bcryptjs";
 
 class UsersModels {
   constructor(pool) {
@@ -21,6 +22,41 @@ class UsersModels {
     }
 
     return result.rows[0].id_user;
+  }
+
+  async verifyUserCredential({ email, password }) {
+    const query = {
+      text: "SELECT id_user, username, role, email password FROM users WHERE email = $1",
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new AuthenticationError("Invalid Credentials");
+    }
+
+    const { password: hashedPassword } = result.rows[0];
+    const match = bcrypt.compare(password, hashedPassword);
+
+    if (!match) {
+      throw new AuthenticationError("Invalid Credentials");
+    }
+
+    return result.rows[0];
+  }
+
+  async verifyNewEmail(email) {
+    const query = {
+      text: "SELECT email FROM users WHERE email = $1",
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rows.length > 0) {
+      throw new InvariantError("Email sudah tersedia");
+    }
   }
 }
 

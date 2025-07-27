@@ -4,10 +4,12 @@ config();
 import express from "express";
 import cors from "cors";
 import pool from "./config/db.js";
+import cookieParser from "cookie-parser";
 import ClientError from "./exceptions/ClientError.js";
 import restaurantRouter from "./routes/restaurants.js";
 import menuRouter from "./routes/menus.js";
 import userRouter from "./routes/users.js";
+import authenticationRouter from "./routes/authentications.js";
 import path from "path";
 import { projectRoot } from "./utils/pathHelper.js";
 
@@ -28,6 +30,7 @@ const corsOption = {
 // Middleware
 app.use(cors(corsOption));
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   "/assets/menus",
@@ -57,6 +60,7 @@ app.use((err, req, res, next) => {
 app.use("/api/restaurants", restaurantRouter);
 app.use("/api/menus", menuRouter);
 app.use("/api/users", userRouter);
+app.use("/api/authentications", authenticationRouter);
 
 app.listen(port, () => {
   console.log(`Server running in http://${host}:${port}`);
