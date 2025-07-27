@@ -1,4 +1,4 @@
-import InvariantError from "../exceptions/InvariantError";
+import InvariantError from "../exceptions/InvariantError.js";
 
 class AuthenticationsModels {
   constructor(pool) {

@@ -8,18 +8,18 @@ class UserController {
     this.postNewUserHandler = this.postNewUserHandler.bind(this);
   }
 
-  async postNewUserHandler(role) {
+  postNewUserHandler(role) {
     return async (req, res) => {
       this._validator.validate(req.body);
       const { email, username, password } = req.body;
 
       await this._model.verifyNewEmail(email);
 
-      const hashedPassword = bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
       const idUser = await this._model.insertNewUser({
         email,
         username,
-        hashedPassword,
+        password: hashedPassword,
         role,
       });
 

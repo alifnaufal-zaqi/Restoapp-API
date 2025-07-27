@@ -26,7 +26,7 @@ class UsersModels {
 
   async verifyUserCredential({ email, password }) {
     const query = {
-      text: "SELECT id_user, username, role, email password FROM users WHERE email = $1",
+      text: "SELECT id_user, username, role, email, password FROM users WHERE email = $1",
       values: [email],
     };
 
