@@ -20,4 +20,12 @@ export const TokenManager = {
       throw new InvariantError("Invalid Refresh Token");
     }
   },
+  verifyAccessToken: (accessToken) => {
+    try {
+      const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_KEY);
+      return decoded;
+    } catch (err) {
+      throw new InvariantError("Invalid Refresh Token");
+    }
+  },
 };

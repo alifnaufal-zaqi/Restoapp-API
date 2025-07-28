@@ -23,15 +23,30 @@ class RestaurantModels {
     return result.rows[0].id_restaurant;
   }
 
-  async selectRestaurant() {
-    const restaurants = await this._pool.query("SELECT * FROM restaurants");
+  async selectRestaurants() {
+    const restaurants = await this._pool.query(
+      `SELECT restaurant_name AS "restaurantName",
+      users.username AS "vendor",
+      users.email
+      FROM restaurants
+      JOIN users
+      ON restaurants.id_user = users.id_user`
+    );
 
     return restaurants.rows;
   }
 
   async selectRestaurantById(id) {
     const query = {
-      text: "SELECT * FROM restaurants WHERE id_restaurant = $1",
+      text: `
+        SELECT restaurant_name AS "restaurantName",
+        users.username AS "vendor",
+        users.email
+        FROM restaurants
+        JOIN users
+        ON restaurants.id_user = users.id_user
+        WHERE restaurants.id_restaurant = $1
+      `,
       values: [id],
     };
 
@@ -42,6 +57,21 @@ class RestaurantModels {
     }
 
     return result.rows[0];
+  }
+
+  async selectRestaurantByIdUser(idRestaurant) {
+    const query = {
+      text: "SELECT id_restaurant FROM restaurants WHERE id_user = $1",
+      values: [idRestaurant],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError("Restaurant not found");
+    }
+
+    return result.rows[0].id_restaurant;
   }
 
   async updateRestaurantById(id, { restaurantName, latitude, longitude }) {

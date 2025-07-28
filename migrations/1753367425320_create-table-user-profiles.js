@@ -25,19 +25,19 @@ export const up = (pgm) => {
     },
     address: {
       type: "TEXT",
-      notNull: true,
+      notNull: false,
     },
     no_telp: {
       type: "CHAR(15)",
-      notNull: true,
+      notNull: false,
     },
     gender: {
       type: "gender",
-      notNull: true,
+      notNull: false,
     },
     photo_profile: {
       type: "VARCHAR(200)",
-      notNull: true,
+      notNull: false,
     },
   });
 };

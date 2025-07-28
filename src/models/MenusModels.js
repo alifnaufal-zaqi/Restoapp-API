@@ -55,21 +55,45 @@ class MenusModels {
     return result.rows[0];
   }
 
+  // Select all menu for display on client
   async selectAllMenus() {
-    const menus = await this._pool.query(
-      `SELECT menus.id_menu,
-      categories.category_name,
-      restaurants.restaurant_name,
-      menus.menu_name, menus.price,
-      menus.stock,
-      menus.image
-      FROM menus JOIN categories
-      ON menus.id_category = categories.id_category
-      JOIN restaurants
-      ON menus.id_restaurant = restaurants.id_restaurant`
-    );
+    const { rows: menus } = await this._pool.query(`
+              SELECT menus.id_menu,
+              categories.category_name,
+              restaurants.restaurant_name,
+              menus.menu_name, menus.price,
+              menus.stock,
+              menus.image
+              FROM menus JOIN categories
+              ON menus.id_category = categories.id_category
+              JOIN restaurants
+              ON menus.id_restaurant = restaurants.id_restaurant
+      `);
 
-    return menus.rows;
+    return menus;
+  }
+
+  // Select all menu owned by restaurant
+  async selectAllMenusByIdRestaurant(idRestaurant) {
+    const query = {
+      text: `SELECT menus.id_menu,
+            categories.category_name,
+            restaurants.restaurant_name,
+            menus.menu_name,
+            menus.price,
+            menus.stock,
+            menus.image
+            FROM menus JOIN categories
+            ON menus.id_category = categories.id_category
+            JOIN restaurants
+            ON menus.id_restaurant = restaurants.id_restaurant
+            WHERE menus.id_restaurant = $1`,
+      values: [idRestaurant],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
   }
 
   async updateMenuById(

@@ -10,6 +10,7 @@ import restaurantRouter from "./routes/restaurants.js";
 import menuRouter from "./routes/menus.js";
 import userRouter from "./routes/users.js";
 import authenticationRouter from "./routes/authentications.js";
+import userProfileRouter from "./routes/user_profiles.js";
 import path from "path";
 import { projectRoot } from "./utils/pathHelper.js";
 
@@ -37,7 +38,7 @@ app.use(
   express.static(path.join(projectRoot, "public", "menus"))
 );
 app.use(
-  "/assets/profile",
+  "/assets/profiles",
   express.static(path.join(projectRoot, "public", "profiles"))
 );
 
@@ -61,6 +62,7 @@ app.use("/api/restaurants", restaurantRouter);
 app.use("/api/menus", menuRouter);
 app.use("/api/users", userRouter);
 app.use("/api/authentications", authenticationRouter);
+app.use("/api/profiles", userProfileRouter);
 
 app.listen(port, () => {
   console.log(`Server running in http://${host}:${port}`);

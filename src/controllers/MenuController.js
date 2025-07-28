@@ -3,12 +3,16 @@ import fs from "fs";
 import { projectRoot } from "../utils/pathHelper.js";
 
 class MenuController {
-  constructor(model, validator) {
-    this._model = model;
+  constructor(menusModel, restaurantModel, validator, tokenManager) {
+    this._menusModel = menusModel;
     this._validator = validator;
+    this._restaurantModel = restaurantModel;
+    this._tokenManager = tokenManager;
 
     this.postNewMenuHandler = this.postNewMenuHandler.bind(this);
     this.deleteMenuByIdHandler = this.deleteMenuByIdHandler.bind(this);
+    this.getAllMenusByIdRestaurantHandler =
+      this.getAllMenusByIdRestaurantHandler.bind(this);
     this.getAllMenusHandler = this.getAllMenusHandler.bind(this);
     this.getMenuByIdHandler = this.getMenuByIdHandler.bind(this);
     this.putMenuByIdHandler = this.putMenuByIdHandler.bind(this);
@@ -20,7 +24,7 @@ class MenuController {
     this._validator.validate(body, file);
 
     const image = `/assets/menus/${file.filename}`;
-    const menuId = await this._model.insertNewMenus({
+    const menuId = await this._menusModel.insertNewMenus({
       ...body,
       image,
     });
@@ -34,7 +38,27 @@ class MenuController {
   }
 
   async getAllMenusHandler(req, res) {
-    const menus = await this._model.selectAllMenus();
+    const menus = await this._menusModel.selectAllMenus();
+
+    return res.status(200).json({
+      status: "success",
+      data: {
+        menus,
+      },
+    });
+  }
+
+  async getAllMenusByIdRestaurantHandler(req, res) {
+    const decodedToken = this._tokenManager.verifyAccessToken(
+      req.cookies.accessToken
+    );
+    const { id_user } = decodedToken;
+    const idRestaurant = await this._restaurantModel.selectRestaurantByIdUser(
+      id_user
+    );
+    const menus = await this._menusModel.selectAllMenusByIdRestaurant(
+      idRestaurant
+    );
 
     return res.status(200).json({
       status: "success",
@@ -46,7 +70,7 @@ class MenuController {
 
   async getMenuByIdHandler(req, res) {
     const { id } = req.params;
-    const menu = await this._model.selectImageMenuById(id);
+    const menu = await this._menusModel.selectImageMenuById(id);
 
     return res.status(200).json({
       status: "success",
@@ -62,7 +86,7 @@ class MenuController {
 
     this._validator.validate(body, file);
 
-    const { image } = await this._model.selectImageMenuById(id);
+    const { image } = await this._menusModel.selectImageMenuById(id);
 
     if (image) {
       const oldImagePath = path.join(
@@ -81,7 +105,7 @@ class MenuController {
       image: newImageMenu,
     };
 
-    await this._model.updateMenuById(id, updatedMenu);
+    await this._menusModel.updateMenuById(id, updatedMenu);
 
     return res.status(200).json({
       status: "success",
@@ -91,7 +115,7 @@ class MenuController {
 
   async deleteMenuByIdHandler(req, res) {
     const { id } = req.params;
-    const selectedImage = await this._model.selectImageMenuById(id);
+    const selectedImage = await this._menusModel.selectImageMenuById(id);
 
     if (selectedImage.image) {
       const fullPathImage = path.join(
@@ -104,7 +128,7 @@ class MenuController {
       }
     }
 
-    await this._model.deleteMenuById(id);
+    await this._menusModel.deleteMenuById(id);
     return res.status(200).json({
       status: "success",
       message: "Success deleted menu",

@@ -31,7 +31,7 @@ class RestaurantController {
   }
 
   async getAllRestaurantsHandler(req, res) {
-    const restaurants = await this._model.selectRestaurant();
+    const restaurants = await this._model.selectRestaurants();
 
     return res.status(200).json({
       status: "success",
