@@ -14,11 +14,12 @@ class RestaurantController {
 
   async postNewRestaurantHandler(req, res) {
     this._validator.validate(req.body);
-    const { restaurantName, latitude, longitude } = req.body;
+    const { restaurantName, latitude, longitude, idUser } = req.body;
     const restaurantId = await this._model.insertNewRestaurant({
       restaurantName,
       latitude,
       longitude,
+      idUser,
     });
 
     return res.status(201).json({

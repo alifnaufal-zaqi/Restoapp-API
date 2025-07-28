@@ -7,11 +7,11 @@ class RestaurantModels {
     this._pool = pool;
   }
 
-  async insertNewRestaurant({ restaurantName, latitude, longitude }) {
+  async insertNewRestaurant({ restaurantName, latitude, longitude, idUser }) {
     const idRestaurant = `restaurant-${nanoid(16)}`;
     const query = {
-      text: "INSERT INTO restaurants VALUES ($1, $2, $3, $4) RETURNING id_restaurant",
-      values: [idRestaurant, restaurantName, latitude, longitude],
+      text: "INSERT INTO restaurants VALUES ($1, $2, $3, $4, $5) RETURNING id_restaurant",
+      values: [idRestaurant, restaurantName, latitude, longitude, idUser],
     };
 
     const result = await this._pool.query(query);
