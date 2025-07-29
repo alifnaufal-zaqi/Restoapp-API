@@ -11,7 +11,7 @@ export const shorthands = undefined;
 export const up = (pgm) => {
   pgm.addColumn("restaurants", {
     id_user: {
-      type: "VARCHAR(30)",
+      type: "VARCHAR(60)",
       notNull: true,
       references: `"users"(id_user)`,
       onDelete: "CASCADE",

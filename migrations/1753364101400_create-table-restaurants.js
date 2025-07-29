@@ -11,7 +11,7 @@ export const shorthands = undefined;
 export const up = (pgm) => {
   pgm.createTable("restaurants", {
     id_restaurant: {
-      type: "VARCHAR(30)",
+      type: "VARCHAR(60)",
       primaryKey: true,
     },
     restaurant_name: {

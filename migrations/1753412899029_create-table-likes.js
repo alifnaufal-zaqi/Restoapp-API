@@ -11,18 +11,18 @@ export const shorthands = undefined;
 export const up = (pgm) => {
   pgm.createTable("likes", {
     id_like: {
-      type: "VARCHAR(30)",
+      type: "VARCHAR(60)",
       primaryKey: true,
     },
     id_user: {
-      type: "VARCHAR(30)",
+      type: "VARCHAR(60)",
       notNull: true,
       references: `"users"(id_user)`,
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
     },
     id_menu: {
-      type: "VARCHAR(30)",
+      type: "VARCHAR(60)",
       notNull: true,
       references: `"menus"(id_menu)`,
       onDelete: "CASCADE",

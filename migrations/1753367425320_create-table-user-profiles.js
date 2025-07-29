@@ -13,11 +13,11 @@ export const up = (pgm) => {
 
   pgm.createTable("user_profiles", {
     id_profile: {
-      type: "VARCHAR(30)",
+      type: "VARCHAR(60)",
       primaryKey: true,
     },
     id_user: {
-      type: "VARCHAR(30)",
+      type: "VARCHAR(60)",
       notNull: true,
       references: `"users"(id_user)`,
       onDelete: "CASCADE",
