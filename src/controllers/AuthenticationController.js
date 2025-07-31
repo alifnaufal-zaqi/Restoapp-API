@@ -95,7 +95,7 @@ class AuthenticationController {
 
     return res.status(200).json({
       status: "success",
-      message: "Refresh token deleted successsfully",
+      message: "Refresh token deleted successfully",
     });
   }
 }

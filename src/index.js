@@ -13,6 +13,7 @@ import authenticationRouter from "./routes/authentications.js";
 import userProfileRouter from "./routes/user_profiles.js";
 import path from "path";
 import { projectRoot } from "./utils/pathHelper.js";
+import NotFoundError from "./exceptions/NotFoundError.js";
 
 const app = express();
 const port = process.env.PORT || 6000;
@@ -42,6 +43,17 @@ app.use(
   express.static(path.join(projectRoot, "public", "profiles"))
 );
 
+app.use((req, res, next) => {
+  next(new NotFoundError("Route Not Found"));
+});
+
+// Defining routes
+app.use("/api/restaurants", restaurantRouter);
+app.use("/api/menus", menuRouter);
+app.use("/api/users", userRouter);
+app.use("/api/authentications", authenticationRouter);
+app.use("/api/profiles", userProfileRouter);
+
 // Middleware for handle error
 app.use((err, req, res, next) => {
   if (err instanceof ClientError) {
@@ -56,13 +68,6 @@ app.use((err, req, res, next) => {
     message: "Internal Server Error",
   });
 });
-
-// Defining routes
-app.use("/api/restaurants", restaurantRouter);
-app.use("/api/menus", menuRouter);
-app.use("/api/users", userRouter);
-app.use("/api/authentications", authenticationRouter);
-app.use("/api/profiles", userProfileRouter);
 
 app.listen(port, () => {
   console.log(`Server running in http://${host}:${port}`);
