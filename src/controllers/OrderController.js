@@ -1,14 +1,25 @@
 class OrderController {
-  constructor(orderModel, orderItemsModel, validator) {
+  constructor(orderModel, orderItemsModel, validator, tokenManager) {
     this._orderModel = orderModel;
     this._orderItemsModel = orderItemsModel;
     this._validator = validator;
+    this._tokenManager = tokenManager;
+
+    this.postNewOrder = this.postNewOrder.bind(this);
+    this.getOrderById = this.getOrderById.bind(this);
+    this.getOrderByIdUser = this.getOrderByIdUser.bind(this);
+    this.putStatusPaymentOrderHandler =
+      this.putStatusPaymentOrderHandler.bind(this);
   }
 
   async postNewOrder(req, res) {
     this._validator.validate(req.body);
-    const { idUser, idPaymentMethod, items } = req.body;
+    const { idPaymentMethod, items } = req.body;
     const orderDate = new Date().toISOString();
+    const decodedToken = this._tokenManager.verifyAccessToken(
+      req.cookies.accessToken
+    );
+    const { id_user } = decodedToken;
 
     const menuItems = items.map((item) => ({
       ...item,
@@ -18,7 +29,7 @@ class OrderController {
     const totalAmount = menuItems.reduce((acc, item) => acc + item.subtotal, 0);
 
     const idOrder = await this._orderModel.insertNewOrder({
-      idUser,
+      idUser: id_user,
       orderDate,
       totalAmount,
       idPaymentMethod,
@@ -43,4 +54,48 @@ class OrderController {
       },
     });
   }
+
+  async getOrderById(req, res) {
+    const { id } = req.body;
+    const order = await this._orderModel.selectOrderById(id);
+
+    return res.status(200).json({
+      status: "success",
+      data: {
+        order,
+      },
+    });
+  }
+
+  async getOrderByIdUser(req, res) {
+    const decodedToken = this._tokenManager.verifyAccessToken(
+      req.cookies.accessToken
+    );
+    const { id_user } = decodedToken;
+    const orders = await this._orderModel.selectOrderByIdUser(id_user);
+
+    return res.status(200).json({
+      status: "success",
+      data: {
+        orders,
+      },
+    });
+  }
+
+  putStatusPaymentOrderHandler(idStatusOrder) {
+    return async (req, res) => {
+      const { id } = req.params;
+      await this._orderModel.updateStatusPaymentOrder(id, idStatusOrder);
+
+      return res.status(200).json({
+        status: "success",
+        message:
+          idStatusOrder === "status-1"
+            ? "Order success paid"
+            : "Order cancelled",
+      });
+    };
+  }
 }
+
+export default OrderController;

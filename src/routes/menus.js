@@ -31,13 +31,6 @@ router.post(
 router.get(
   "/",
   verifyToken,
-  new AsyncHandler(menuController.getAllMenusHandler).handle()
-);
-
-router.get(
-  "/restaurant",
-  verifyToken,
-  isVendor,
   new AsyncHandler(menuController.getAllMenusByIdRestaurantHandler).handle()
 );
 

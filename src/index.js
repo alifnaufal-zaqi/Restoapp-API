@@ -11,6 +11,7 @@ import menuRouter from "./routes/menus.js";
 import userRouter from "./routes/users.js";
 import authenticationRouter from "./routes/authentications.js";
 import userProfileRouter from "./routes/user_profiles.js";
+import orderRouter from "./routes/orders.js";
 import path from "path";
 import { projectRoot } from "./utils/pathHelper.js";
 import NotFoundError from "./exceptions/NotFoundError.js";
@@ -53,6 +54,7 @@ app.use("/api/menus", menuRouter);
 app.use("/api/users", userRouter);
 app.use("/api/authentications", authenticationRouter);
 app.use("/api/profiles", userProfileRouter);
+app.use("/api/orders", orderRouter);
 
 // Middleware for handle error
 app.use((err, req, res, next) => {

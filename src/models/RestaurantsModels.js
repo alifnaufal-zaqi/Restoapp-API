@@ -59,10 +59,10 @@ class RestaurantModels {
     return result.rows[0];
   }
 
-  async selectRestaurantByIdUser(idRestaurant) {
+  async selectRestaurantByIdUser(idUser) {
     const query = {
       text: "SELECT id_restaurant FROM restaurants WHERE id_user = $1",
-      values: [idRestaurant],
+      values: [idUser],
     };
 
     const result = await this._pool.query(query);

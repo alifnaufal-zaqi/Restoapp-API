@@ -65,12 +65,13 @@ class OrdersModels {
                 ON orders.id_payment_method = payment_method.id_payment_method
                 JOIN payment_status
                 ON orders.id_status = payment_status.id_status
-                WHERE orders.id_user = $1`,
+                WHERE orders.id_user = $1
+                ORDER BY orders.created_at`,
       values: [idUser],
     };
     const result = await this._pool.query(query);
 
-    return result.rows[0];
+    return result.rows;
   }
 
   async updateStatusPaymentOrder(idOrder, newStatusOrder) {

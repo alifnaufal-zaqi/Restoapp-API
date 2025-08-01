@@ -13,7 +13,6 @@ class MenuController {
     this.deleteMenuByIdHandler = this.deleteMenuByIdHandler.bind(this);
     this.getAllMenusByIdRestaurantHandler =
       this.getAllMenusByIdRestaurantHandler.bind(this);
-    this.getAllMenusHandler = this.getAllMenusHandler.bind(this);
     this.getMenuByIdHandler = this.getMenuByIdHandler.bind(this);
     this.putMenuByIdHandler = this.putMenuByIdHandler.bind(this);
   }
@@ -33,17 +32,6 @@ class MenuController {
       status: "success",
       data: {
         menuId,
-      },
-    });
-  }
-
-  async getAllMenusHandler(req, res) {
-    const menus = await this._menusModel.selectAllMenus();
-
-    return res.status(200).json({
-      status: "success",
-      data: {
-        menus,
       },
     });
   }

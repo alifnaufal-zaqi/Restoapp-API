@@ -1,7 +1,6 @@
 import Joi from "joi";
 
 export const OrderPayloadSchema = Joi.object({
-  idUser: Joi.string().required(),
   idPaymentMethod: Joi.string().required(),
   items: Joi.array().items(
     Joi.object({
