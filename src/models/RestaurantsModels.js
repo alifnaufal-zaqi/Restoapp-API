@@ -39,7 +39,9 @@ class RestaurantModels {
   async selectRestaurantById(id) {
     const query = {
       text: `
-        SELECT restaurant_name AS "restaurantName",
+        SELECT restaurants.restaurant_name AS "restaurantName",
+        restaurants.latitude,
+        restaurants.longitude,
         users.username AS "vendor",
         users.email
         FROM restaurants

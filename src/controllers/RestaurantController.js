@@ -1,6 +1,7 @@
 class RestaurantController {
-  constructor(model, validator) {
+  constructor(model, menuModel, validator) {
     this._model = model;
+    this._menuModel = menuModel;
     this._validator = validator;
 
     // Binding Method
@@ -44,11 +45,15 @@ class RestaurantController {
   async getRestaurantByIdHandler(req, res) {
     const { id } = req.params;
     const restaurant = await this._model.selectRestaurantById(id);
+    const menus = await this._menuModel.selectAllMenusByIdRestaurant(id);
 
     res.status(200).json({
       status: "success",
       data: {
-        restaurant,
+        restaurant: {
+          ...restaurant,
+          menus,
+        },
       },
     });
   }

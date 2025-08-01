@@ -5,6 +5,7 @@ import OrderController from "../controllers/OrderController.js";
 import OrderItemsModel from "../models/OrderItemsModels.js";
 import OrderItemController from "../controllers/OrderItemController.js";
 import RestaurantModels from "../models/RestaurantsModels.js";
+import MenusModels from "../models/MenusModels.js";
 import { OrderPayloadValidator } from "../validator/orders/index.js";
 import AsyncHandler from "../utils/asyncFn.js";
 import verifyToken from "../middleware/verifyToken.js";
@@ -15,9 +16,11 @@ const router = express.Router();
 const ordersModels = new OrdersModels(pool);
 const orderItemsModels = new OrderItemsModel(pool);
 const restaurantModel = new RestaurantModels(pool);
+const menusModel = new MenusModels(pool);
 const orderController = new OrderController(
   ordersModels,
   orderItemsModels,
+  menusModel,
   OrderPayloadValidator,
   TokenManager
 );

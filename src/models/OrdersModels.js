@@ -39,7 +39,7 @@ class OrdersModels {
                 payment_methods.method_name,
                 payment_status.status_name
                 FROM orders JOIN payment_methods
-                ON orders.id_payment_method = payment_method.id_payment_method
+                ON orders.id_payment_method = payment_methods.id_payment_method
                 JOIN payment_status
                 ON orders.id_status = payment_status.id_status
                 WHERE orders.id_order = $1`,
@@ -62,7 +62,7 @@ class OrdersModels {
                 payment_methods.method_name,
                 payment_status.status_name
                 FROM orders JOIN payment_methods
-                ON orders.id_payment_method = payment_method.id_payment_method
+                ON orders.id_payment_method = payment_methods.id_payment_method
                 JOIN payment_status
                 ON orders.id_status = payment_status.id_status
                 WHERE orders.id_user = $1
@@ -77,7 +77,7 @@ class OrdersModels {
   async updateStatusPaymentOrder(idOrder, newStatusOrder) {
     const query = {
       text: "UPDATE orders SET id_status = $1 WHERE id_order = $2",
-      values: [idOrder, newStatusOrder],
+      values: [newStatusOrder, idOrder],
     };
 
     await this._pool.query(query);

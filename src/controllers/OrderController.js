@@ -1,7 +1,10 @@
+import InvariantError from "../exceptions/InvariantError.js";
+
 class OrderController {
-  constructor(orderModel, orderItemsModel, validator, tokenManager) {
+  constructor(orderModel, orderItemsModel, menuModel, validator, tokenManager) {
     this._orderModel = orderModel;
     this._orderItemsModel = orderItemsModel;
+    this._menuModel = menuModel;
     this._validator = validator;
     this._tokenManager = tokenManager;
 
@@ -36,6 +39,14 @@ class OrderController {
     });
 
     for (let item of menuItems) {
+      const stokMenu = await this._menuModel.selectStockMenuByIdMenu(
+        item.idMenu
+      );
+
+      if (item.quantity > stokMenu) {
+        throw new InvariantError(`Insufficient stock for ${item.idMenu}`);
+      }
+
       await this._orderItemsModel.insertOrderItem({
         idOrder,
         idMenu: item.idMenu,
@@ -45,6 +56,8 @@ class OrderController {
         subtotal: item.subtotal,
         note: item.note,
       });
+
+      await this._menuModel.updateStockByIdMenu(item.idMenu, item.quantity);
     }
 
     return res.status(201).json({
@@ -56,13 +69,17 @@ class OrderController {
   }
 
   async getOrderById(req, res) {
-    const { id } = req.body;
+    const { id } = req.params;
     const order = await this._orderModel.selectOrderById(id);
+    const menuItems = await this._orderItemsModel.getItemsMenuByIdOrder(id);
 
     return res.status(200).json({
       status: "success",
       data: {
-        order,
+        order: {
+          ...order,
+          items: menuItems,
+        },
       },
     });
   }

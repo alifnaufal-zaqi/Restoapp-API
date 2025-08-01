@@ -78,6 +78,30 @@ class MenusModels {
     return result.rows;
   }
 
+  async selectStockMenuByIdMenu(idMenu) {
+    const query = {
+      text: "SELECT stock FROM menus WHERE id_menu = $1",
+      values: [idMenu],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError(`Menu with id ${idMenu} not found`);
+    }
+
+    return result.rows[0].stock;
+  }
+
+  async updateStockByIdMenu(idMenu, quantity) {
+    const query = {
+      text: "UPDATE menus SET stock = stock - $1 WHERE id_menu = $2",
+      values: [quantity, idMenu],
+    };
+
+    await this._pool.query(query);
+  }
+
   async updateMenuById(
     id,
     { idCategory, idRestaurant, menuName, price, stock, image }

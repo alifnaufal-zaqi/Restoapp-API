@@ -44,10 +44,6 @@ app.use(
   express.static(path.join(projectRoot, "public", "profiles"))
 );
 
-app.use((req, res, next) => {
-  next(new NotFoundError("Route Not Found"));
-});
-
 // Defining routes
 app.use("/api/restaurants", restaurantRouter);
 app.use("/api/menus", menuRouter);
@@ -55,6 +51,10 @@ app.use("/api/users", userRouter);
 app.use("/api/authentications", authenticationRouter);
 app.use("/api/profiles", userProfileRouter);
 app.use("/api/orders", orderRouter);
+
+app.use((req, res, next) => {
+  next(new NotFoundError("Route Not Found"));
+});
 
 // Middleware for handle error
 app.use((err, req, res, next) => {

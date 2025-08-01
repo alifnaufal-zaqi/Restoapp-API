@@ -2,15 +2,18 @@ import AsyncHandler from "../utils/asyncFn.js";
 import express from "express";
 import RestaurantController from "../controllers/RestaurantController.js";
 import RestaurantModels from "../models/RestaurantsModels.js";
+import MenusModels from "../models/MenusModels.js";
 import { RestaurantValidator } from "../validator/restaurants/index.js";
 import verifyToken from "../middleware/verifyToken.js";
 import { isAdmin } from "../middleware/checkRole.js";
 import pool from "../config/db.js";
 
 const router = express.Router();
+const menusModels = new MenusModels(pool);
 const restaurantModels = new RestaurantModels(pool);
 const restaurantController = new RestaurantController(
   restaurantModels,
+  menusModels,
   RestaurantValidator
 );
 
@@ -24,14 +27,12 @@ router.post(
 router.get(
   "/",
   verifyToken,
-  isAdmin,
   new AsyncHandler(restaurantController.getAllRestaurantsHandler).handle()
 );
 
 router.get(
   "/:id",
   verifyToken,
-  isAdmin,
   new AsyncHandler(restaurantController.getRestaurantByIdHandler).handle()
 );
 
