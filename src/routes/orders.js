@@ -53,6 +53,13 @@ router.put(
 );
 
 router.get(
+  "/items",
+  verifyToken,
+  isVendor,
+  new AsyncHandler(orderItemController.getOrderItemByIdRestaurant).handle()
+);
+
+router.get(
   "/:id",
   verifyToken,
   new AsyncHandler(orderController.getOrderById).handle()
@@ -62,13 +69,6 @@ router.get(
   "/",
   verifyToken,
   new AsyncHandler(orderController.getOrderByIdUser).handle()
-);
-
-router.get(
-  "/items",
-  verifyToken,
-  isVendor,
-  new AsyncHandler(orderItemController.getOrderItemByIdRestaurant).handle()
 );
 
 export default router;

@@ -9,6 +9,8 @@ class OrderItemController {
   }
 
   async getOrderItemByIdRestaurant(req, res) {
+    console.log(req);
+
     const decodedToken = this._tokenManager.verifyAccessToken(
       req.cookies.accessToken
     );

@@ -118,6 +118,19 @@ class MenusModels {
     }
   }
 
+  async verifyMenuExist(idMenu) {
+    const query = {
+      text: "SELECT id_menu FROM menus WHERE id_menu = $1",
+      values: [idMenu],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError("Menus not found");
+    }
+  }
+
   async deleteMenuById(id) {
     const query = {
       text: "DELETE FROM menus WHERE id_menu = $1 RETURNING id_menu",
