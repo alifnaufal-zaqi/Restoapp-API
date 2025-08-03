@@ -22,8 +22,8 @@ class RestaurantModels {
         restaurantName,
         latitude,
         longitude,
-        idUser,
         restaurantImage,
+        idUser,
       ],
     };
 
@@ -39,9 +39,9 @@ class RestaurantModels {
   async selectRestaurants() {
     const restaurants = await this._pool.query(
       `SELECT restaurants.id_restaurant,
-      restaurant_name AS "restaurantName",
+      restaurants.restaurant_name AS "restaurantName",
       restaurants.restaurant_image,
-      users.username AS "vendor",
+      users.username AS "vendor"
       FROM restaurants
       JOIN users
       ON restaurants.id_user = users.id_user`
@@ -57,7 +57,7 @@ class RestaurantModels {
         restaurants.restaurant_name AS "restaurantName",
         restaurants.latitude,
         restaurants.longitude,
-        restaurants.restaurant_image
+        restaurants.restaurant_image,
         users.username AS "vendor",
         users.email
         FROM restaurants

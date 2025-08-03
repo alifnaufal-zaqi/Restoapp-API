@@ -8,6 +8,8 @@ const storage = multer.diskStorage({
 
     if (fullPath.startsWith("/api/menus")) {
       destiantionPath += "menus";
+    } else if (fullPath.startsWith("/api/restaurants")) {
+      destiantionPath += "restaurants";
     } else {
       destiantionPath += "user-profiles";
     }
@@ -16,7 +18,18 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    cb(null, `menu-${Date.now()}${ext}`);
+    const fullPath = `${req.baseUrl}${req.path}`;
+    let filename;
+
+    if (fullPath.startsWith("/api/menus")) {
+      filename = `menu-${Date.now()}${ext}`;
+    } else if (fullPath.startsWith("/api/restaurants")) {
+      filename = `restaurant-${Date.now()}${ext}`;
+    } else {
+      filename = `profile-${Date.now()}${ext}`;
+    }
+
+    cb(null, filename);
   },
 });
 

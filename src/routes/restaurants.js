@@ -7,6 +7,7 @@ import { RestaurantValidator } from "../validator/restaurants/index.js";
 import verifyToken from "../middleware/verifyToken.js";
 import { isAdmin } from "../middleware/checkRole.js";
 import pool from "../config/db.js";
+import upload from "../middleware/multer.js";
 
 const router = express.Router();
 const menusModels = new MenusModels(pool);
@@ -21,6 +22,7 @@ router.post(
   "/",
   verifyToken,
   isAdmin,
+  upload.single("restaurantImage"),
   new AsyncHandler(restaurantController.postNewRestaurantHandler).handle()
 );
 
@@ -40,6 +42,7 @@ router.put(
   "/:id",
   verifyToken,
   isAdmin,
+  upload.single("restaurantImage"),
   new AsyncHandler(restaurantController.putRestaurantByIdHandler).handle()
 );
 
