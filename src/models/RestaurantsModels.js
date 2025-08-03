@@ -7,11 +7,24 @@ class RestaurantModels {
     this._pool = pool;
   }
 
-  async insertNewRestaurant({ restaurantName, latitude, longitude, idUser }) {
+  async insertNewRestaurant({
+    restaurantName,
+    latitude,
+    longitude,
+    idUser,
+    restaurantImage,
+  }) {
     const idRestaurant = `restaurant-${nanoid(16)}`;
     const query = {
-      text: "INSERT INTO restaurants VALUES ($1, $2, $3, $4, $5) RETURNING id_restaurant",
-      values: [idRestaurant, restaurantName, latitude, longitude, idUser],
+      text: "INSERT INTO restaurants VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_restaurant",
+      values: [
+        idRestaurant,
+        restaurantName,
+        latitude,
+        longitude,
+        idUser,
+        restaurantImage,
+      ],
     };
 
     const result = await this._pool.query(query);
@@ -25,9 +38,10 @@ class RestaurantModels {
 
   async selectRestaurants() {
     const restaurants = await this._pool.query(
-      `SELECT restaurant_name AS "restaurantName",
+      `SELECT restaurants.id_restaurant,
+      restaurant_name AS "restaurantName",
+      restaurants.restaurant_image,
       users.username AS "vendor",
-      users.email
       FROM restaurants
       JOIN users
       ON restaurants.id_user = users.id_user`
@@ -39,9 +53,11 @@ class RestaurantModels {
   async selectRestaurantById(id) {
     const query = {
       text: `
-        SELECT restaurants.restaurant_name AS "restaurantName",
+        SELECT restaurants.id_restaurant,
+        restaurants.restaurant_name AS "restaurantName",
         restaurants.latitude,
         restaurants.longitude,
+        restaurants.restaurant_image
         users.username AS "vendor",
         users.email
         FROM restaurants
@@ -76,10 +92,13 @@ class RestaurantModels {
     return result.rows[0].id_restaurant;
   }
 
-  async updateRestaurantById(id, { restaurantName, latitude, longitude }) {
+  async updateRestaurantById(
+    id,
+    { restaurantName, latitude, longitude, restaurantImage }
+  ) {
     const query = {
-      text: "UPDATE restaurants SET restaurant_name = $1, latitude = $2, longitude = $3 WHERE id_restaurant = $4 RETURNING id_restaurant",
-      values: [restaurantName, latitude, longitude, id],
+      text: "UPDATE restaurants SET restaurant_name = $1, latitude = $2, longitude = $3, restaurant_image = $4 WHERE id_restaurant = $5 RETURNING id_restaurant",
+      values: [restaurantName, latitude, longitude, restaurantImage, id],
     };
 
     const result = await this._pool.query(query);

@@ -26,6 +26,10 @@ export const up = (pgm) => {
       type: "DECIMAL(11, 8)",
       notNull: true,
     },
+    restaurant_image: {
+      type: "VARCHAR(200)",
+      notNull: true,
+    },
   });
 };
 

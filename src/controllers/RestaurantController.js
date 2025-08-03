@@ -1,3 +1,7 @@
+import path from "path";
+import fs from "fs";
+import { projectRoot } from "../utils/pathHelper.js";
+
 class RestaurantController {
   constructor(model, menuModel, validator) {
     this._model = model;
@@ -14,13 +18,14 @@ class RestaurantController {
   }
 
   async postNewRestaurantHandler(req, res) {
-    this._validator.validate(req.body);
-    const { restaurantName, latitude, longitude, idUser } = req.body;
+    const { body, file } = req;
+
+    this._validator.validate(body, file);
+
+    const restaurantImage = `/assets/restaurants/${file.filename}`;
     const restaurantId = await this._model.insertNewRestaurant({
-      restaurantName,
-      latitude,
-      longitude,
-      idUser,
+      ...body,
+      restaurantImage,
     });
 
     return res.status(201).json({
@@ -59,15 +64,32 @@ class RestaurantController {
   }
 
   async putRestaurantByIdHandler(req, res) {
-    this._validator.validate(req.body);
-    const { restaurantName, latitude, longitude } = req.body;
-    const { id } = req.params;
+    const { body, file, params } = req;
+    const { id } = params;
 
-    await this._model.updateRestaurantById(id, {
-      restaurantName,
-      latitude,
-      longitude,
-    });
+    this._validator.validate(body, file);
+
+    const { restaurant_image: restaurantImage } =
+      await this._model.selectRestaurantById(id);
+
+    if (restaurantImage) {
+      const oldImagePath = path.join(
+        projectRoot,
+        restaurantImage.replace("/assets", "public")
+      );
+
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
+      }
+    }
+
+    const newRestaurantImage = `/assets/restaurants/${file.filename}`;
+    const updatedRestaurant = {
+      ...body,
+      restaurantImage: newRestaurantImage,
+    };
+
+    await this._model.updateRestaurantById(id, updatedRestaurant);
 
     return res.status(200).json({
       status: "success",
@@ -77,6 +99,19 @@ class RestaurantController {
 
   async deleteRestaurantByIdHandler(req, res) {
     const { id } = req.params;
+    const { restaurant_image: restaurantImage } =
+      await this._model.selectRestaurantById(id);
+
+    if (restaurantImage) {
+      const fullPathImage = path.join(
+        projectRoot,
+        restaurantImage.replace("/assets", "public")
+      );
+
+      if (fs.unlinkSync(fullPathImage)) {
+        fs.unlinkSync(fullPathImage);
+      }
+    }
 
     await this._model.deleteRestaurantById(id);
 
