@@ -17,7 +17,7 @@ import { projectRoot } from "./utils/pathHelper.js";
 import NotFoundError from "./exceptions/NotFoundError.js";
 
 const app = express();
-const port = process.env.PORT || 6000;
+const port = process.env.PORT || 8888;
 const host = process.env.HOST || "localhost";
 
 pool
@@ -26,7 +26,7 @@ pool
   .catch((err) => console.error(err.message));
 
 const corsOption = {
-  origin: process.env.CORS_ORIGIN,
+  origin: ["http://localhost:3000", "http://localhost:5173"],
   credentials: true,
 };
 
@@ -42,6 +42,10 @@ app.use(
 app.use(
   "/assets/profiles",
   express.static(path.join(projectRoot, "public", "profiles"))
+);
+app.use(
+  "/assets/restaurants",
+  express.static(path.join(projectRoot, "public", "restaurants"))
 );
 
 // Defining routes
