@@ -28,13 +28,11 @@ router.post(
 
 router.get(
   "/",
-  verifyToken,
   new AsyncHandler(restaurantController.getAllRestaurantsHandler).handle()
 );
 
 router.get(
   "/:id",
-  verifyToken,
   new AsyncHandler(restaurantController.getRestaurantByIdHandler).handle()
 );
 

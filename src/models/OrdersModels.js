@@ -66,7 +66,7 @@ class OrdersModels {
                 JOIN payment_status
                 ON orders.id_status = payment_status.id_status
                 WHERE orders.id_user = $1
-                ORDER BY orders.created_at`,
+                ORDER BY orders.created_at ASC`,
       values: [idUser],
     };
     const result = await this._pool.query(query);
