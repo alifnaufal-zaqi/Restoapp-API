@@ -2,7 +2,6 @@ import Joi from "joi";
 
 export const MenusPayloadSchema = Joi.object({
   idCategory: Joi.string().required(),
-  idRestaurant: Joi.string().required(),
   menuName: Joi.string().required(),
   price: Joi.number().required(),
   stock: Joi.number().required(),

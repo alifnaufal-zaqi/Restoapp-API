@@ -46,8 +46,6 @@ class AuthenticationController {
   }
 
   async putAuthenticationHandler(req, res) {
-    this._validator.validatePutAuthenticationPayload(req.body);
-
     const { refreshToken } = req.cookies;
     await this._authenticationModel.verifyRefreshToken(refreshToken);
 
@@ -75,8 +73,6 @@ class AuthenticationController {
   }
 
   async deleteAuthenticationHandler(req, res) {
-    this._validator.validateDeleteAuthenticationPayload(req.body);
-
     const { refreshToken } = req.cookies;
     await this._authenticationModel.verifyRefreshToken(refreshToken);
     await this._authenticationModel.deleteRefreshToken(refreshToken);

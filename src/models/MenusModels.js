@@ -102,13 +102,10 @@ class MenusModels {
     await this._pool.query(query);
   }
 
-  async updateMenuById(
-    id,
-    { idCategory, idRestaurant, menuName, price, stock, image }
-  ) {
+  async updateMenuById(id, { idCategory, menuName, price, stock, image }) {
     const query = {
-      text: "UPDATE menus SET id_category = $1, id_restaurant = $2, menu_name = $3, price = $4, stock = $5, image = $6 WHERE id_menu = $7 RETURNING id_menu",
-      values: [idCategory, idRestaurant, menuName, price, stock, image, id],
+      text: "UPDATE menus SET id_category = $1, menu_name = $2, price = $3, stock = $4, image = $5 WHERE id_menu = $6 RETURNING id_menu",
+      values: [idCategory, menuName, price, stock, image, id],
     };
 
     const result = await this._pool.query(query);

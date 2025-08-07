@@ -74,16 +74,21 @@ class OrderItemsModel {
 
   async selectOrderItemsByIdRestaurant(idRestaurant) {
     const query = {
-      text: `SELECT order_items.id_order_item,
-                menus.menu_name,
-                menus.image,
-                order_items.quantity,
-                order_items.price,
-                order_items.subtotal,
-                order_items.note
-                FROM order_items JOIN menus
-                ON order_items.id_menu = menus.id_menu
-                WHERE order_items.id_restaurant = $1`,
+      text: `SELECT 
+              order_items.id_order_item,
+              menus.menu_name,
+              menus.image,
+              order_items.quantity,
+              order_items.price,
+              order_items.subtotal,
+              payment_status.status_name,
+              order_items.note
+              FROM order_items
+              JOIN menus ON order_items.id_menu = menus.id_menu
+              JOIN orders ON order_items.id_order = orders.id_order
+              JOIN payment_status ON orders.id_status = payment_status.id_status
+              WHERE order_items.id_restaurant = $1 
+              ORDER BY order_items.created_at ASC`,
       values: [idRestaurant],
     };
 

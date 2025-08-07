@@ -22,9 +22,18 @@ class MenuController {
 
     this._validator.validate(body, file);
 
+    const decodedToken = this._tokenManager.verifyAccessToken(
+      req.cookies.accessToken
+    );
+    const { id_user: idUser } = decodedToken;
+    const idRestaurant = await this._restaurantModel.selectRestaurantByIdUser(
+      idUser
+    );
+
     const image = `/assets/menus/${file.filename}`;
     const menuId = await this._menusModel.insertNewMenus({
       ...body,
+      idRestaurant,
       image,
     });
 

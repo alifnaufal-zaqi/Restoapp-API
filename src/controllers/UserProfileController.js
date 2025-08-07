@@ -13,14 +13,15 @@ class UserProfileController {
     const decodedToken = this._tokenManager.verifyAccessToken(
       req.cookies.accessToken
     );
-    const { id_user } = decodedToken;
+    const { id_user, role } = decodedToken;
 
     const userProfile = await this._model.selectUserProfileByIdUser(id_user);
 
     res.status(200).json({
       status: "success",
       data: {
-        userProfile,
+        ...userProfile,
+        role,
       },
     });
   }
